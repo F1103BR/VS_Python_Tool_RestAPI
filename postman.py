@@ -7,8 +7,8 @@ def send_request():
     method = method_var.get()
     url = url_entry.get()
     
-    if not url:
-        messagebox.showwarning("Eingabefehler", "Bitte geben Sie eine URL ein.")
+    if not url or url == "http://<ipaddr>":
+        messagebox.showwarning("Eingabefehler", "Bitte geben Sie eine gültige URL ein.")
         return
 
     try:
@@ -30,6 +30,16 @@ def send_request():
 
 def on_enter_key(event):
     send_request()
+
+def add_placeholder(event=None):
+    if url_entry.get() == "":
+        url_entry.insert(0, "http://<ipaddr>")
+        url_entry.config(foreground='grey')
+
+def remove_placeholder(event):
+    if url_entry.get() == "http://<ipaddr>":
+        url_entry.delete(0, tk.END)
+        url_entry.config(foreground='black')
 
 # Hauptfenster erstellen
 root = tk.Tk()
@@ -55,6 +65,8 @@ method_combobox.grid(row=0, column=0, padx=5, pady=5)
 # URL Eingabefeld
 url_entry = ttk.Entry(input_frame, width=70)
 url_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+url_entry.bind("<FocusIn>", remove_placeholder)
+url_entry.bind("<FocusOut>", add_placeholder)
 url_entry.bind("<Return>", on_enter_key)
 
 # Senden Button
@@ -72,6 +84,9 @@ result_text.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
 # Grid Konfiguration
 root.grid_rowconfigure(1, weight=1)
 root.grid_columnconfigure(0, weight=1)
+
+# Platzhalter hinzufügen, wenn das Programm startet
+add_placeholder()
 
 # Hauptschleife starten
 root.mainloop()
